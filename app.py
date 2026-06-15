@@ -231,10 +231,15 @@ with tab_fitting:
         
         st.markdown("### Kolmogorov-Smirnov Test Statistics")
         ks_df = pd.DataFrame([
-            {"Distribution": name.capitalize(), "KS Statistic": f"{res['stat']:.4f}", "p-value": f"{res['p_value']:.4f}"}
+            {"Distribution": name.capitalize(), "KS Statistic": res['stat'], "p-value": res['p_value']}
             for name, res in fit_results.items()
         ])
-        st.dataframe(ks_df, hide_index=True, use_container_width=True)
+        # Highlight the minimum KS Statistic in light green and format values
+        styled_df = ks_df.style.highlight_min(subset=['KS Statistic'], color='#D1FAE5').format({
+            'KS Statistic': '{:.4f}',
+            'p-value': '{:.4f}'
+        })
+        st.dataframe(styled_df, hide_index=True, use_container_width=True)
         
         st.info(f"**Best Fit Selection:** The distribution with the lowest KS statistic is **{best_dist_name.upper()}**.")
 
