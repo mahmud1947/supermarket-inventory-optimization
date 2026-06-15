@@ -1,0 +1,23 @@
+# Virtual environment
+myenv/
+venv/
+.venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+
+# Visualizations and compiled outputs
+visualizations/
+thesis_draft.pdf
+proposal.pdf
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
