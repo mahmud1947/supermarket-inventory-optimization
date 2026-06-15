@@ -3,6 +3,3 @@ pandas
 numpy
 scipy
 plotly
-matplotlib
-markdown2
-xhtml2pdf
