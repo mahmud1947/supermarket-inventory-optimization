@@ -69,7 +69,7 @@ st.markdown('<div class="subtitle">Chittagong University of Engineering and Tech
 st.markdown("""
     <div style="text-align: center; margin-top: -1.5rem; margin-bottom: 2rem; font-size: 1rem; color: #374151;">
         <strong>Prepared By:</strong> Md Mahmudur Rahman (ID: 2009007) &nbsp;&nbsp;|&nbsp;&nbsp;
-        <strong>Supervised By:</strong> Nusrat Sultana
+        <strong>Supervised By:</strong> Nusrat Sultana, Assistant Professor
     </div>
 """, unsafe_allow_html=True)
 
