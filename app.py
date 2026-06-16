@@ -65,6 +65,14 @@ st.markdown("""
 st.markdown('<div class="main-title">📦 Stochastic (Q, R) Inventory Optimization Dashboard</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Chittagong University of Engineering and Technology (CUET)<br/>Department of Mechatronics & Industrial Engineering</div>', unsafe_allow_html=True)
 
+# Add Author and Advisor Credits
+st.markdown("""
+    <div style="text-align: center; margin-top: -1.5rem; margin-bottom: 2rem; font-size: 1rem; color: #374151;">
+        <strong>Prepared By:</strong> Md Mahmudur Rahman (ID: 2009007) &nbsp;&nbsp;|&nbsp;&nbsp;
+        <strong>Supervised By:</strong> Nusrat Sultana & S. M. Fahim Faisal
+    </div>
+""", unsafe_allow_html=True)
+
 # Helper function to fit best distribution
 def fit_best_distribution(data):
     results = {}
