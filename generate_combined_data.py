@@ -96,6 +96,11 @@ def main():
     product_summary_path = "product_summary_dataset.csv"
     summary_df.to_csv(product_summary_path, index=False)
     print(f"Product-Level Master Dataset created: {product_summary_path} ({summary_df.shape[0]} rows, {summary_df.shape[1]} columns)")
+    
+    # Save as Excel file (.xlsx) for Microsoft Excel
+    excel_path = "product_summary_dataset.xlsx"
+    summary_df.to_excel(excel_path, index=False)
+    print(f"Product-Level Master Dataset Excel file created: {excel_path}")
 
 if __name__ == "__main__":
     main()
