@@ -59,6 +59,15 @@ st.markdown("""
             font-weight: bold;
             font-size: 1.1rem;
         }
+        
+        /* Hide Streamlit top-right menu, deploy button, github/star icons, header, and footer */
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        #MainMenu {visibility: hidden;}
+        .stDeployButton {display: none;}
+        .stAppDeployButton {display: none;}
+        div[data-testid="stHeader"] {display: none;}
+        div[data-testid="stToolbar"] {display: none;}
     </style>
 """, unsafe_allow_html=True)
 
