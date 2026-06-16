@@ -14,9 +14,19 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom Styling matching the academic CUET Theme
-st.markdown("""
+# Theme Customization Switch in Sidebar (defined early to prevent NameError)
+st.sidebar.header("🎨 Theme Customization")
+light_mode = st.sidebar.toggle("☀️ Light Mode", value=False)
+plotly_template = "plotly_white" if light_mode else "plotly_dark"
+
+if light_mode:
+    # Light Mode Theme CSS
+    theme_css = """
     <style>
+        .stApp {
+            background-color: #FFFFFF;
+            color: #1F2937;
+        }
         .main-title {
             font-size: 2.2rem;
             color: #1E3A8A;
@@ -39,8 +49,8 @@ st.markdown("""
             margin-bottom: 1rem;
         }
         .metric-card {
-            background-color: #F3F4F6;
-            border-left: 5px solid #3B82F6;
+            background-color: #F3F4F6 !important;
+            border-left: 5px solid #3B82F6 !important;
             padding: 1rem;
             border-radius: 0.375rem;
             margin-bottom: 1rem;
@@ -48,11 +58,11 @@ st.markdown("""
         .metric-value {
             font-size: 1.8rem;
             font-weight: bold;
-            color: #111827;
+            color: #111827 !important;
         }
         .metric-label {
             font-size: 0.9rem;
-            color: #6B7280;
+            color: #6B7280 !important;
         }
         .saving-highlight {
             color: #10B981;
@@ -69,7 +79,70 @@ st.markdown("""
         div[data-testid="stHeader"] {display: none;}
         div[data-testid="stToolbar"] {display: none;}
     </style>
-""", unsafe_allow_html=True)
+    """
+else:
+    # Dark Mode Theme CSS (by default)
+    theme_css = """
+    <style>
+        .stApp {
+            background-color: #0E1117;
+            color: #E0E0E0;
+        }
+        .main-title {
+            font-size: 2.2rem;
+            color: #60A5FA;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.2rem;
+        }
+        .subtitle {
+            font-size: 1.1rem;
+            color: #9CA3AF;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .section-header {
+            font-size: 1.5rem;
+            color: #60A5FA;
+            border-bottom: 2px solid #3B82F6;
+            padding-bottom: 0.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .metric-card {
+            background-color: #1E293B !important;
+            border-left: 5px solid #3B82F6 !important;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #F8FAFC !important;
+        }
+        .metric-label {
+            font-size: 0.9rem;
+            color: #94A3B8 !important;
+        }
+        .saving-highlight {
+            color: #34D399;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        /* Hide Streamlit top-right menu, deploy button, github/star icons, header, and footer */
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        #MainMenu {visibility: hidden;}
+        .stDeployButton {display: none;}
+        .stAppDeployButton {display: none;}
+        div[data-testid="stHeader"] {display: none;}
+        div[data-testid="stToolbar"] {display: none;}
+    </style>
+    """
+
+st.markdown(theme_css, unsafe_allow_html=True)
 
 st.markdown('<div class="main-title">📦 Stochastic (Q, R) Inventory Optimization Dashboard</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Chittagong University of Engineering and Technology (CUET)<br/>Department of Mechatronics & Industrial Engineering</div>', unsafe_allow_html=True)
@@ -305,6 +378,9 @@ with tab_fitting:
             fig.add_trace(go.Scatter(x=x_int, y=y, mode='markers', name=f'Fitted Poisson', marker=dict(color='red', size=8)))
             
         fig.update_layout(
+            template=plotly_template,
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
             xaxis_title="Daily Sales Quantity",
             yaxis_title="Density",
             margin=dict(l=20, r=20, t=20, b=20),
@@ -448,6 +524,9 @@ with tab_sim:
     ))
     
     fig2.update_layout(
+        template=plotly_template,
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
         xaxis_title="Simulated Day",
         yaxis_title="On-Hand Inventory Level (Units)",
         margin=dict(l=20, r=20, t=20, b=20),
@@ -547,6 +626,9 @@ with tab_opt:
             ))
             
             fig3.update_layout(
+                template=plotly_template,
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
                 xaxis_title="Order Quantity (Q)",
                 yaxis_title="Reorder Point (ROP)",
                 margin=dict(l=20, r=20, t=20, b=20),
