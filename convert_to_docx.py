@@ -69,7 +69,6 @@ def parse_runs(paragraph, text, default_font="Georgia"):
             math_content = math_content.replace('\\', '')
             
             # Parse subscripts (_) and superscripts (^)
-            # We break the math token down into base, subscripts, and superscripts
             sub_sup_tokens = re.split(r'(_\{[^}]+\}|_[a-zA-Z0-9*+-]+|\^\{[^}]+\}|\^[a-zA-Z0-9*+-]+)', math_content)
             
             for s_token in sub_sup_tokens:
@@ -135,283 +134,290 @@ def build_docx():
         section.left_margin = Inches(1.38)
         section.right_margin = Inches(0.98)
 
-    # Split document by page breaks
-    pages = content.split('<div style="page-break-before: always;"></div>')
-
-    for p_idx, page_content in enumerate(pages):
-        page_content = page_content.strip()
-        if not page_content:
-            continue
-            
-        # If it's not the first page, add a page break
-        if p_idx > 0:
-            doc.add_page_break()
-
-        # Check if the page is the HTML Cover Page
-        if "chittagong-university-of-engineering-and-technolog-seeklogo.png" in page_content:
-            # We hardcode the title page rendering for exact formatting
-            print("Rendering Title Page...")
-            # Title
-            title_match = re.search(r'<h1[^>]*>(.*?)</h1>', page_content, re.DOTALL)
-            title_text = title_match.group(1).strip() if title_match else "THESIS TITLE PLACEHOLDER"
-            title_p = doc.add_paragraph()
-            title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = title_p.add_run(title_text)
-            run.font.name = "Georgia"
-            run.font.size = Pt(16)
-            run.font.bold = True
-            
-            # Spaces
-            for _ in range(2):
-                p = doc.add_paragraph()
-                p.paragraph_format.space_after = Pt(12)
-
-            # "By"
-            by_p = doc.add_paragraph()
-            by_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = by_p.add_run("By\n\n")
-            run.font.name = "Georgia"
-            run.font.size = Pt(12)
-            
-            # Author Details
-            author_p = doc.add_paragraph()
-            author_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run1 = author_p.add_run("Md Mahmudur Rahman\n")
-            run1.font.bold = True
-            run1.font.size = Pt(13)
-            run2 = author_p.add_run("Student ID: 2009007")
-            run2.font.bold = True
-            run2.font.size = Pt(12)
-            for r in [run1, run2]:
-                r.font.name = "Georgia"
-                
-            # Logo spacing
-            p = doc.add_paragraph()
-            p.paragraph_format.space_after = Pt(18)
-
-            # Add CUET Logo Image
-            logo_path = "chittagong-university-of-engineering-and-technolog-seeklogo.png"
-            if os.path.exists(logo_path):
-                logo_p = doc.add_paragraph()
-                logo_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                logo_p.add_run().add_picture(logo_path, width=Inches(1.5))
-            
-            # Spacing
-            p = doc.add_paragraph()
-            p.paragraph_format.space_after = Pt(18)
-
-            # Degree Text
-            degree_p = doc.add_paragraph()
-            degree_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run1 = degree_p.add_run("A thesis submitted in partial fulfilment of the requirements for the degree of\n")
-            run1.font.size = Pt(11)
-            run2 = degree_p.add_run("Bachelor of Science in Mechatronics and Industrial Engineering\n")
-            run2.font.bold = True
-            run2.font.size = Pt(12)
-            for r in [run1, run2]:
-                r.font.name = "Georgia"
-
-            # Spacing
-            p = doc.add_paragraph()
-            p.paragraph_format.space_after = Pt(24)
-
-            # Department & University
-            univ_p = doc.add_paragraph()
-            univ_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run1 = univ_p.add_run("Department of Mechatronics & Industrial Engineering\n")
-            run1.font.bold = True
-            run1.font.size = Pt(12)
-            run2 = univ_p.add_run("Chittagong University of Engineering and Technology (CUET)\n")
-            run2.font.bold = True
-            run2.font.size = Pt(13)
-            run3 = univ_p.add_run("Chittagong-4349, Bangladesh\n\n")
-            run3.font.size = Pt(11)
-            run4 = univ_p.add_run("JUNE 2026")
-            run4.font.bold = True
-            run4.font.size = Pt(11)
-            for r in [run1, run2, run3, run4]:
-                r.font.name = "Georgia"
-            continue
-
-        # If the page is another HTML-heavy page (e.g. Student Declaration, Supervisor Approval, Credits)
-        # We clean the HTML tags out or parse them
-        if page_content.startswith("<div") or page_content.startswith("<p"):
-            # Strip tags and keep structural lines
-            lines = []
-            for line in page_content.split("\n"):
-                clean_line = re.sub(r'<[^>]+>', '', line).strip()
-                if clean_line:
-                    lines.append(clean_line)
-            # Reconstruct content
-            page_content = "\n\n".join(lines)
-
-        # Parse standard Markdown blocks on the page
-        blocks = page_content.split("\n\n")
-        in_table = False
-        table_rows = []
-        in_code = False
-        code_lines = []
+    # Separate cover page HTML from the rest of markdown content
+    parts = content.split("</div>", 1)
+    if len(parts) < 2:
+        print("Error: Could not split title page from the rest of the document.")
+        return
         
-        is_first_para = True
+    cover_html = parts[0]
+    rest_markdown = parts[1]
 
-        for block in blocks:
-            block = block.strip()
-            if not block:
-                continue
+    # Render Title Page (Page 1)
+    print("Rendering Title Page...")
+    title_p = doc.add_paragraph()
+    title_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    title_p.paragraph_format.space_before = Pt(36)
+    title_p.paragraph_format.space_after = Pt(24)
+    run = title_p.add_run("OPTIMIZATION OF SAFETY STOCK AND REORDERING POINT FOR A MULTI ITEM SUPPLY CHAIN USING STOCHASTIC MODELS AND MONTE CARLO SIMULATION")
+    run.font.name = "Georgia"
+    run.font.size = Pt(16)
+    run.font.bold = True
+    
+    # "By"
+    by_p = doc.add_paragraph()
+    by_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    by_p.paragraph_format.space_before = Pt(24)
+    by_p.paragraph_format.space_after = Pt(12)
+    run = by_p.add_run("By")
+    run.font.name = "Georgia"
+    run.font.size = Pt(12)
+    
+    # Author Details
+    author_p = doc.add_paragraph()
+    author_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    author_p.paragraph_format.space_after = Pt(36)
+    run1 = author_p.add_run("Md Mahmudur Rahman\n")
+    run1.font.bold = True
+    run1.font.size = Pt(13)
+    run2 = author_p.add_run("Student ID: 2009007")
+    run2.font.bold = True
+    run2.font.size = Pt(12)
+    for r in [run1, run2]:
+        r.font.name = "Georgia"
+        
+    # Logo
+    logo_path = "chittagong-university-of-engineering-and-technolog-seeklogo.png"
+    if os.path.exists(logo_path):
+        logo_p = doc.add_paragraph()
+        logo_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        logo_p.paragraph_format.space_after = Pt(36)
+        logo_p.add_run().add_picture(logo_path, width=Inches(1.5))
+        
+    # Degree info
+    degree_p = doc.add_paragraph()
+    degree_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    degree_p.paragraph_format.space_after = Pt(36)
+    run1 = degree_p.add_run("A thesis submitted in partial fulfilment of the requirements for the degree of\n")
+    run1.font.size = Pt(11)
+    run2 = degree_p.add_run("Bachelor of Science in Mechatronics and Industrial Engineering")
+    run2.font.bold = True
+    run2.font.size = Pt(12)
+    for r in [run1, run2]:
+        r.font.name = "Georgia"
+        
+    # Department & University
+    univ_p = doc.add_paragraph()
+    univ_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    univ_p.paragraph_format.space_before = Pt(24)
+    univ_p.paragraph_format.space_after = Pt(12)
+    run1 = univ_p.add_run("Department of Mechatronics & Industrial Engineering\n")
+    run1.font.bold = True
+    run1.font.size = Pt(12)
+    run2 = univ_p.add_run("Chittagong University of Engineering and Technology (CUET)\n")
+    run2.font.bold = True
+    run2.font.size = Pt(13)
+    run3 = univ_p.add_run("Chittagong-4349, Bangladesh\n\n")
+    run3.font.size = Pt(11)
+    run4 = univ_p.add_run("JUNE 2026")
+    run4.font.bold = True
+    run4.font.size = Pt(11)
+    for r in [run1, run2, run3, run4]:
+        r.font.name = "Georgia"
 
-            # -------------------------------------------------------------
-            # Code Block Start/End
-            # -------------------------------------------------------------
-            if block.startswith("```"):
-                if not in_code:
-                    in_code = True
-                    code_lines.append(block.replace("```python", "").replace("```", ""))
-                else:
-                    in_code = False
-                    # Write code block to Word
-                    p = doc.add_paragraph()
-                    p.paragraph_format.space_before = Pt(6)
-                    p.paragraph_format.space_after = Pt(6)
-                    p.paragraph_format.left_indent = Inches(0.4)
-                    run = p.add_run("\n".join(code_lines))
-                    run.font.name = "Courier New"
-                    run.font.size = Pt(8.5)
-                    code_lines = []
-                continue
-            
-            if in_code:
-                code_lines.append(block)
-                continue
+    # Add page break after Cover Page
+    doc.add_page_break()
 
-            # -------------------------------------------------------------
-            # Table Start/Row Collection/Table End
-            # -------------------------------------------------------------
-            if block.startswith("|"):
-                in_table = True
-                table_rows.append(block)
-                continue
+    # Now parse the rest of the document block by block
+    blocks = rest_markdown.split("\n\n")
+    
+    in_table = False
+    table_rows = []
+    in_code = False
+    code_lines = []
+    
+    is_first_para = True
+    
+    page_break_headings = [
+        "DECLARATION",
+        "COPYRIGHT NOTICE",
+        "DEDICATION",
+        "LIST OF PUBLICATIONS",
+        "APPROVAL/DECLARATION BY THE SUPERVISOR(S)",
+        "ACKNOWLEDGEMENT",
+        "ABSTRACT",
+        "TABLE OF CONTENTS",
+        "LIST OF FIGURES",
+        "LIST OF TABLES",
+        "NOMENCLATURE",
+        "REFERENCES",
+        "APPENDICES"
+    ]
+
+    for block in blocks:
+        block = block.strip()
+        if not block:
+            continue
+
+        # Replace HTML break tags with newlines and clean up remaining HTML tags in this block
+        block = re.sub(r'<br\s*/?>', '\n', block)
+        # Note: If it's a structural div like page break, skip it or handle it
+        if '<div' in block and 'page-break-before' in block:
+            # We already handle page breaks via headings, so we can ignore this block or skip it
+            continue
+        
+        # Clean other html tags (except images which we parse below)
+        if not (block.startswith("<img") or "img src=" in block):
+            block = re.sub(r'<[^>]+>', '', block).strip()
+
+        if not block:
+            continue
+
+        # -------------------------------------------------------------
+        # Code Block Start/End
+        # -------------------------------------------------------------
+        if block.startswith("```"):
+            if not in_code:
+                in_code = True
+                code_lines.append(block.replace("```python", "").replace("```", ""))
             else:
-                if in_table:
-                    # Write table to Word
-                    write_table_to_docx(doc, table_rows)
-                    table_rows = []
-                    in_table = False
+                in_code = False
+                p = doc.add_paragraph()
+                p.paragraph_format.space_before = Pt(6)
+                p.paragraph_format.space_after = Pt(6)
+                p.paragraph_format.left_indent = Inches(0.4)
+                run = p.add_run("\n".join(code_lines))
+                run.font.name = "Courier New"
+                run.font.size = Pt(8.5)
+                code_lines = []
+            continue
+        
+        if in_code:
+            code_lines.append(block)
+            continue
 
-            # -------------------------------------------------------------
-            # Headings
-            # -------------------------------------------------------------
-            if block.startswith("# "):
-                # Heading 1
-                heading_text = block[2:].strip().upper()
-                h = doc.add_heading(level=1)
-                h.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                run = h.add_run(heading_text)
-                run.font.name = "Georgia"
-                run.font.size = Pt(15)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-                h.paragraph_format.space_before = Pt(18)
-                h.paragraph_format.space_after = Pt(12)
-                h.paragraph_format.keep_with_next = True
-                is_first_para = True
-                continue
+        # -------------------------------------------------------------
+        # Table Start/Row Collection/Table End
+        # -------------------------------------------------------------
+        if block.startswith("|"):
+            in_table = True
+            table_rows.append(block)
+            continue
+        else:
+            if in_table:
+                write_table_to_docx(doc, table_rows)
+                table_rows = []
+                in_table = False
+
+        # -------------------------------------------------------------
+        # Headings
+        # -------------------------------------------------------------
+        if block.startswith("# "):
+            heading_text = block[2:].strip().upper()
+            
+            # Heading 1 always starts on a new page!
+            doc.add_page_break()
+            
+            h = doc.add_heading(level=1)
+            h.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            run = h.add_run(heading_text)
+            run.font.name = "Georgia"
+            run.font.size = Pt(15)
+            run.font.bold = True
+            run.font.color.rgb = RGBColor(0, 0, 0)
+            h.paragraph_format.space_before = Pt(18)
+            h.paragraph_format.space_after = Pt(12)
+            h.paragraph_format.keep_with_next = True
+            is_first_para = True
+            continue
+            
+        elif block.startswith("## "):
+            heading_text = block[3:].strip()
+            
+            # Clean formatting characters from heading text
+            clean_heading_text = heading_text.strip("*_#")
+            
+            # Page break for front matter pages
+            if clean_heading_text.upper() in page_break_headings:
+                doc.add_page_break()
                 
-            elif block.startswith("## "):
-                # Heading 2
-                heading_text = block[3:].strip()
-                h = doc.add_heading(level=2)
-                h.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                run = h.add_run(heading_text)
-                run.font.name = "Georgia"
-                run.font.size = Pt(12.5)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-                h.paragraph_format.space_before = Pt(14)
-                h.paragraph_format.space_after = Pt(8)
-                h.paragraph_format.keep_with_next = True
-                is_first_para = True
-                continue
-                
-            elif block.startswith("### "):
-                # Heading 3
-                heading_text = block[4:].strip()
-                h = doc.add_heading(level=3)
-                h.alignment = WD_ALIGN_PARAGRAPH.LEFT
-                run = h.add_run(heading_text)
-                run.font.name = "Georgia"
-                run.font.size = Pt(11)
-                run.font.bold = True
-                run.font.color.rgb = RGBColor(0, 0, 0)
-                h.paragraph_format.space_before = Pt(12)
-                h.paragraph_format.space_after = Pt(6)
-                h.paragraph_format.keep_with_next = True
-                is_first_para = True
-                continue
+            h = doc.add_heading(level=2)
+            h.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            run = h.add_run(clean_heading_text)
+            run.font.name = "Georgia"
+            run.font.size = Pt(12.5)
+            run.font.bold = True
+            run.font.color.rgb = RGBColor(0, 0, 0)
+            h.paragraph_format.space_before = Pt(14)
+            h.paragraph_format.space_after = Pt(8)
+            h.paragraph_format.keep_with_next = True
+            is_first_para = True
+            continue
+            
+        elif block.startswith("### "):
+            heading_text = block[4:].strip()
+            h = doc.add_heading(level=3)
+            h.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            run = h.add_run(heading_text.strip("*_#"))
+            run.font.name = "Georgia"
+            run.font.size = Pt(11)
+            run.font.bold = True
+            run.font.color.rgb = RGBColor(0, 0, 0)
+            h.paragraph_format.space_before = Pt(12)
+            h.paragraph_format.space_after = Pt(6)
+            h.paragraph_format.keep_with_next = True
+            is_first_para = True
+            continue
 
-            # -------------------------------------------------------------
-            # Images (Fitted plots or flowcharts)
-            # -------------------------------------------------------------
-            # Example: [demand_fit_7694.png](file:///...)
-            image_match = re.search(r'\[(.*?)\.(png|jpg|jpeg)\]\(file:///.*?\)', block)
-            if image_match:
-                img_name = f"{image_match.group(1)}.{image_match.group(2)}"
-                img_path = f"visualizations/{img_name}"
-                if os.path.exists(img_path):
-                    p = doc.add_paragraph()
-                    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    p.add_run().add_picture(img_path, width=Inches(4.5))
-                    # Check for caption below it
-                    caption_block = block.replace(image_match.group(0), "").strip()
-                    if caption_block:
-                        cp = doc.add_paragraph()
-                        cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                        c_run = cp.add_run(caption_block)
-                        c_run.font.name = "Georgia"
-                        c_run.font.size = Pt(9.5)
-                        c_run.font.italic = True
-                continue
+        # -------------------------------------------------------------
+        # Images (Fitted plots or flowcharts)
+        # -------------------------------------------------------------
+        image_match = re.search(r'\[(.*?)\.(png|jpg|jpeg)\]\(file:///.*?\)', block)
+        if image_match:
+            img_name = f"{image_match.group(1)}.{image_match.group(2)}"
+            img_path = f"visualizations/{img_name}"
+            if os.path.exists(img_path):
+                p = doc.add_paragraph()
+                p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                p.add_run().add_picture(img_path, width=Inches(4.5))
+                caption_block = block.replace(image_match.group(0), "").strip()
+                if caption_block:
+                    cp = doc.add_paragraph()
+                    cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                    c_run = cp.add_run(caption_block)
+                    c_run.font.name = "Georgia"
+                    c_run.font.size = Pt(9.5)
+                    c_run.font.italic = True
+            continue
 
-            # -------------------------------------------------------------
-            # Bullet/List Items
-            # -------------------------------------------------------------
-            if block.startswith("* ") or block.startswith("- "):
-                # Simple list item
-                p = doc.add_paragraph(style='List Bullet')
-                p.paragraph_format.space_after = Pt(4)
-                # Remove markdown character and parse runs
-                clean_text = block[2:].strip()
-                parse_runs(p, clean_text)
-                continue
-            
-            # Numbered Lists (like 1. 2. 3.)
-            num_match = re.match(r'^(\d+)\.\s+(.*)', block, re.DOTALL)
-            if num_match:
-                p = doc.add_paragraph(style='List Number')
-                p.paragraph_format.space_after = Pt(4)
-                clean_text = num_match.group(2).strip()
-                parse_runs(p, clean_text)
-                continue
+        # -------------------------------------------------------------
+        # Bullet/List Items
+        # -------------------------------------------------------------
+        if block.startswith("* ") or block.startswith("- "):
+            p = doc.add_paragraph(style='List Bullet')
+            p.paragraph_format.space_after = Pt(4)
+            clean_text = block[2:].strip()
+            parse_runs(p, clean_text)
+            continue
+        
+        # Numbered Lists (like 1. 2. 3.)
+        num_match = re.match(r'^(\d+)\.\s+(.*)', block, re.DOTALL)
+        if num_match:
+            p = doc.add_paragraph(style='List Number')
+            p.paragraph_format.space_after = Pt(4)
+            clean_text = num_match.group(2).strip()
+            parse_runs(p, clean_text)
+            continue
 
-            # -------------------------------------------------------------
-            # Normal Paragraph
-            # -------------------------------------------------------------
-            p = doc.add_paragraph()
-            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-            p.paragraph_format.line_spacing = 1.3
-            p.paragraph_format.space_after = Pt(8)
-            
-            # First paragraph after heading has NO indentation, subsequent paragraphs have 0.5" indent
-            if not is_first_para:
-                p.paragraph_format.first_line_indent = Inches(0.5)
-            
-            is_first_para = False
-            parse_runs(p, block)
-            
-        # If the page ended with a table, write it out
-        if in_table:
-            write_table_to_docx(doc, table_rows)
-            table_rows = []
-            in_table = False
+        # -------------------------------------------------------------
+        # Normal Paragraph
+        # -------------------------------------------------------------
+        p = doc.add_paragraph()
+        p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+        p.paragraph_format.line_spacing = 1.3
+        p.paragraph_format.space_after = Pt(8)
+        
+        if not is_first_para:
+            p.paragraph_format.first_line_indent = Inches(0.5)
+        
+        is_first_para = False
+        parse_runs(p, block)
+        
+    # If the page ended with a table, write it out
+    if in_table:
+        write_table_to_docx(doc, table_rows)
+        table_rows = []
+        in_table = False
 
     # Save the output file
     output_filename = "thesis_draft.docx"
