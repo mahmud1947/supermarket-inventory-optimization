@@ -135,13 +135,14 @@ def build_docx():
         section.right_margin = Inches(0.98)
 
     # Separate cover page HTML from the rest of markdown content
-    parts = content.split("</div>", 1)
+    # We split by "## Declaration" which is the start of the second page.
+    parts = content.split("## Declaration", 1)
     if len(parts) < 2:
         print("Error: Could not split title page from the rest of the document.")
         return
         
     cover_html = parts[0]
-    rest_markdown = parts[1]
+    rest_markdown = "## Declaration\n\n" + parts[1]
 
     # Render Title Page (Page 1)
     print("Rendering Title Page...")
@@ -249,8 +250,14 @@ def build_docx():
         if not block:
             continue
 
-        # Replace HTML break tags with newlines and clean up remaining HTML tags in this block
+        # Replace HTML break tags with newlines and replace HTML entities with clean equivalents
         block = re.sub(r'<br\s*/?>', '\n', block)
+        block = block.replace("&nbsp;", " ")
+        block = block.replace("&amp;", "&")
+        block = block.replace("&deg;", "°")
+        block = block.replace("&lt;", "<")
+        block = block.replace("&gt;", ">")
+        
         # Note: If it's a structural div like page break, skip it or handle it
         if '<div' in block and 'page-break-before' in block:
             # We already handle page breaks via headings, so we can ignore this block or skip it
@@ -420,7 +427,7 @@ def build_docx():
         in_table = False
 
     # Save the output file
-    output_filename = "thesis_draft.docx"
+    output_filename = "thesis_draft_google_docs.docx"
     doc.save(output_filename)
     print(f"Microsoft Word document successfully created: {output_filename}")
 
