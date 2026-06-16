@@ -47,7 +47,7 @@ This work may not be copied, reproduced, or distributed in whole or in part with
 
 The following research paper has been prepared and submitted as an outcome of this thesis work:
 
-* **Publication 1**: Rahman, M. M., and Faisal, S. M. F., "Stochastic Optimization of Safety Stock and Reorder Point using Monte Carlo Simulation in a Multi-Item Supply Chain," *Journal of Industrial Engineering and Operations Management*, vol. 14, no. 3, pp. 245–260, 2026 (Submitted and Under Review).
+* **Publication 1**: Rahman, M. M., and Sultana, N., "Stochastic Optimization of Safety Stock and Reorder Point using Monte Carlo Simulation in a Multi-Item Supply Chain," *Journal of Industrial Engineering and Operations Management*, vol. 14, no. 3, pp. 245–260, 2026 (Submitted and Under Review).
 
 
 ## Approval/Declaration by the Supervisor(s)
@@ -56,7 +56,7 @@ This is to certify that **Md Mahmudur Rahman** (Student ID: 2009007) has carried
 
 <br/><br/><br/><br/>
 ------------------------------------------------------  
-**S. M. Fahim Faisal**  
+**Nusrat Sultana**  
 Assistant Professor  
 Department of Mechatronics & Industrial Engineering  
 Chittagong University of Engineering & Technology (CUET)  
@@ -67,7 +67,7 @@ Date: June 09, 2026
 
 First and foremost, I express my deepest gratitude to Almighty Allah for giving me the strength, health, and patience to complete this research work successfully.
 
-I would like to express my sincere gratitude and respect to my supervisor, **S. M. Fahim Faisal**, Assistant Professor, Department of Mechatronics & Industrial Engineering, Chittagong University of Engineering and Technology (CUET), for his valuable guidance, constant encouragement, and insightful feedback throughout the duration of this study. His mentorship was critical to resolving the stochastic modeling challenges in this thesis.
+I would like to express my sincere gratitude and respect to my supervisor, **Nusrat Sultana**, Assistant Professor, Department of Mechatronics & Industrial Engineering, Chittagong University of Engineering and Technology (CUET), for her valuable guidance, constant encouragement, and insightful feedback throughout the duration of this study. Her mentorship was critical to resolving the stochastic modeling challenges in this thesis.
 
 I also extend my thanks to the Head of the Department and all the faculty members of the Department of Mechatronics & Industrial Engineering for providing a supportive academic environment and laboratory facilities.
 

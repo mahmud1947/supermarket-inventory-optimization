@@ -69,7 +69,7 @@ st.markdown('<div class="subtitle">Chittagong University of Engineering and Tech
 st.markdown("""
     <div style="text-align: center; margin-top: -1.5rem; margin-bottom: 2rem; font-size: 1rem; color: #374151;">
         <strong>Prepared By:</strong> Md Mahmudur Rahman (ID: 2009007) &nbsp;&nbsp;|&nbsp;&nbsp;
-        <strong>Supervised By:</strong> Nusrat Sultana & S. M. Fahim Faisal
+        <strong>Supervised By:</strong> Nusrat Sultana
     </div>
 """, unsafe_allow_html=True)
 
@@ -226,8 +226,14 @@ with tab_fitting:
     col1, col2 = st.columns([1, 2])
     
     with col1:
+        product_names = {
+            7694: "Premium High-Demand Category (e.g. Fresh Dairy / Eggs)",
+            1589: "Regular Stable-Demand Category (e.g. Packaged Snacks / Beverages)",
+            6656: "Slow-Moving Volatile Category (e.g. Specialty Spices / Condiments)"
+        }
         st.markdown("### Estimated Empirical Parameters")
         st.markdown(fr"""
+        - **Product Description:** {product_names.get(selected_pid, f'Supermarket Item {selected_pid}')}
         - **Mean Daily Demand ($\mu_D$):** {mu_D:.2f} units
         - **Demand Std Dev ($\sigma_D$):** {sigma_D:.2f} units
         - **Mean Supplier Lead Time ($\mu_L$):** {mu_L:.2f} days
