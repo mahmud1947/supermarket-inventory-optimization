@@ -249,7 +249,11 @@ with tab_fitting:
             for name, res in fit_results.items()
         ])
         # Highlight the minimum KS Statistic in light green and format values
-        styled_df = ks_df.style.highlight_min(subset=['KS Statistic'], color='#D1FAE5').format({
+        def highlight_min_custom(s):
+            is_min = s == s.min()
+            return ['background-color: #D1FAE5; color: black;' if v else '' for v in is_min]
+            
+        styled_df = ks_df.style.apply(highlight_min_custom, subset=['KS Statistic']).format({
             'KS Statistic': '{:.4f}',
             'p-value': '{:.4f}'
         })
