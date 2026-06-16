@@ -147,21 +147,40 @@ def compile_thesis():
     print("Compiling thesis front matter...")
     
     # Title Page
-    title_page = """# OPTIMIZATION OF SAFETY STOCK AND REORDERING POINT FOR A MULTI ITEM SUPPLY CHAIN USING STOCHASTIC MODELS AND MONTE CARLO SIMULATION
-
-<br/><br/>
-By
-<br/><br/>
-**Md Mahmudur Rahman**  
-**ID: 2009007**
-<br/><br/><br/><br/>
-A thesis submitted in partial fulfilment of the requirements for the degree of  
-**BACHELOR of SCIENCE in Mechatronics and Industrial Engineering**
-<br/><br/>
-Department of Mechatronics & Industrial Engineering  
-CHITTAGONG UNIVERSITY OF ENGINEERING AND TECHNOLOGY  
-CHITTAGONG, BANGLADESH  
-JUNE 2026
+    title_page = """<div style="text-align: center; font-family: 'Georgia', 'Times New Roman', serif;">
+    <br/>
+    <h1 style="font-size: 16pt; font-weight: bold; line-height: 1.4; margin-bottom: 25px; text-align: center; text-transform: uppercase;">
+        OPTIMIZATION OF SAFETY STOCK AND REORDERING POINT FOR A MULTI ITEM SUPPLY CHAIN USING STOCHASTIC MODELS AND MONTE CARLO SIMULATION
+    </h1>
+    <br/>
+    <div style="font-size: 12pt; margin-bottom: 10px;">By</div>
+    <div style="font-size: 14pt; font-weight: bold; margin-bottom: 5px;">Md Mahmudur Rahman</div>
+    <div style="font-size: 12pt; font-weight: bold; margin-bottom: 25px;">Student ID: 2009007</div>
+    <br/>
+    <div style="margin: 25px 0;">
+        <img src="chittagong-university-of-engineering-and-technolog-seeklogo.png" style="width: 140px; height: auto;" />
+    </div>
+    <br/>
+    <div style="font-size: 11pt; text-transform: uppercase; margin-bottom: 10px; line-height: 1.4;">
+        A thesis submitted in partial fulfilment of the requirements for the degree of
+    </div>
+    <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase; margin-bottom: 25px;">
+        Bachelor of Science in Mechatronics and Industrial Engineering
+    </div>
+    <br/>
+    <div style="font-size: 12pt; font-weight: bold; margin-top: 15px;">
+        Department of Mechatronics & Industrial Engineering
+    </div>
+    <div style="font-size: 13pt; font-weight: bold; text-transform: uppercase;">
+        Chittagong University of Engineering and Technology (CUET)
+    </div>
+    <div style="font-size: 11pt; margin-bottom: 15px;">
+        Chittagong-4349, Bangladesh
+    </div>
+    <div style="font-size: 11pt; font-weight: bold; margin-top: 25px;">
+        JUNE 2026
+    </div>
+</div>
 """
 
     # Declaration by Student
